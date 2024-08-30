@@ -38,6 +38,35 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy to Kubernetes') {
+            environment {
+                // Load Kubernetes token from Jenkins credentials (create form credentials -> kind secret txt)
+                K8S_TOKEN = credentials('k8s-token')
+                // Load kubernetes rootCA (create form credentials -> kind secret file)
+                K8S_CA = credentials('ca-k8s')
+                // Kubernetes Server
+                K8S_SERVER = 'https://192.168.100.201:6443'
+            }
+            steps {
+                script {
+                    sh 'echo "Deploying to Kubernetes cluster"'
+
+                    // Edit IMAGE & Label file deployment, service
+                    sh """
+                    sed -i "s|\${IMAGE}|${IMAGE_NAME}:${IMAGE_TAG}|g" k8s/deployment.yaml
+                    sed -i "s|\${LABEL}|${IMAGE_TAG}|g" k8s/deployment.yaml
+                    sed -i "s|\${LABEL}|${IMAGE_TAG}|g" k8s/service.yaml
+                    """
+
+                    // Use Kubernetes API with the service account token
+                    sh """
+                    kubectl apply -f k8s/deployment.yaml --token=${K8S_TOKEN} --server=${K8S_SERVER} --certificate-authority=${K8S_CA}
+                    kubectl apply -f k8s/service.yaml --token=${K8S_TOKEN} --server=${K8S_SERVER} --certificate-authority=${K8S_CA}
+                    kubectl apply -f k8s/ingress.yaml --token=${K8S_TOKEN} --server=${K8S_SERVER} --certificate-authority=${K8S_CA}
+                    """
+                }
+            }
     }
 
     post {
