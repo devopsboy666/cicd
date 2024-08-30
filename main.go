@@ -33,12 +33,17 @@ func main() {
 
 	api.Get("/p1", func(c *fiber.Ctx) error {
 
-		fmt.Println("Send Request From Path / Success")
+		fmt.Println("Send Request From Path /p1 Success")
 		return c.JSON(fiber.Map{
 			"Message":       "Path /p1",
 			"Version Image": "v0.1",
 		})
 
+	})
+
+	api.Get("/status", func(c *fiber.Ctx) error {
+		fmt.Println("OK")
+		return c.SendStatus(200)
 	})
 
 	api.Listen(":3000")
