@@ -1,39 +1,48 @@
 pipeline {
-    agent any 
+    agent any
+
+    environment {
+        // Global environment variable for image tag
+        IMAGE_TAG = 'gb1' // Change this to your desired tag
+        NEXUS_URL = 'http://192.168.1.215:9876'
+        IMAGE_NAME = '192.168.1.215:9876/go/gofiber'
+    }
 
     stages {
         stage('Clone Repository') {
             steps {
-                // คำสั่งสำหรับ clone repository จาก GitHub
+                // Clone the Git repository
                 git 'https://github.com/pakawat116688/cicd.git'
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
-                // คำสั่งสำหรับ build Go application
-                sh 'go build -o myapp'
+                script {
+                    sh 'echo "Building Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"'
+                    // Build Docker image with tag
+                    docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+                }
             }
         }
 
-        stage('Test') {
+        stage('Push Docker Image') {
             steps {
-                // คำสั่งสำหรับ run tests
-                sh 'go test ./...'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                // คำสั่งสำหรับ deploy application หรือการย้ายไฟล์ไปยังเซิร์ฟเวอร์
-                sh 'scp -r ./myapp user@server:/path/to/deploy'
+                script {
+                    sh 'echo "Push Docker image url: ${NEXUS_URL}"'
+                    // Login to Nexus registry
+                    docker.withRegistry("${NEXUS_URL}", 'nexus-credentials') {
+                        // Push Docker image to Nexus
+                        docker.image("${IMAGE_NAME}:${IMAGE_TAG}").push("${IMAGE_TAG}")
+                    }
+                }
             }
         }
     }
 
     post {
         always {
-            // คำสั่งที่รันทุกครั้ง ไม่ว่าจะสำเร็จหรือไม่ เช่น การทำความสะอาด (cleanup)
+            // Clean up
             cleanWs()
         }
     }
