@@ -12,7 +12,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 // Clone the Git repository
-                git 'https://github.com/pakawat116688/cicd.git'
+                git branch: 'main', url: 'https://github.com/pakawat116688/cicd.git'
             }
         }
 
