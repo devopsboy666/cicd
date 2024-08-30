@@ -6,7 +6,7 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -o app .
 # Deploy stage
-FROM gcr.io/distroless/base-debian11
+FROM debian:bullseye-slim
 USER root
 RUN adduser --disabled-password --gecos '' --uid 10000 --gid 10000 godev
 COPY --from=build /app/app /app/app
