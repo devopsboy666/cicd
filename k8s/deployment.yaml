@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gofiber-deployment
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gofiber-${LABEL}
+  template:
+    metadata:
+      labels:
+        app: gofiber-${LABEL}
+    spec:
+      imagePullSecrets:
+      - name: nexus-pull-secret
+      containers:
+        - name: gofiber
+          image: '${IMAGE}'
+          ports:
+            - containerPort: 3000
