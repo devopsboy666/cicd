@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Global environment variable for image tag
-        IMAGE_TAG = 'gb1' // Change this to your desired tag
+        IMAGE_TAG = 'v${BUILD_NUMBER}' // Change this to your desired tag, BUID_NUMBER is number run pipeline
         NEXUS_URL = 'http://192.168.1.215:9876'
         IMAGE_NAME = '192.168.1.215:9876/go/gofiber'
     }
