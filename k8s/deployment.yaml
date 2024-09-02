@@ -17,6 +17,6 @@ spec:
       - name: nexus-pull-secret
       containers:
         - name: gofiber
-          image: 'IMAGETAG'
+          image: ''
           ports:
             - containerPort: 3000

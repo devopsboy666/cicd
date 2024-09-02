@@ -50,11 +50,18 @@ pipeline {
                 script {
                     sh 'echo "Deploying to Kubernetes cluster"'
                     // Edit IMAGE & Label file deployment, service
+                    
                     sh """
-                    sed -i "s/IMAGETAG/${IMAGE_NAME}:${IMAGE_TAG}/g" k8s/deployment.yaml
-                    sed -i "s/LABEL/${IMAGE_TAG}/g" k8s/deployment.yaml
-                    sed -i "s/LABEL/${IMAGE_TAG}/g" k8s/service.yaml
+                    sed -i "s|image: ''|image: ${IMAGE_NAME}:${IMAGE_TAG}|g" k8s/deployment.yaml
+                    sed -i "s|LABEL|${IMAGE_TAG}|g" k8s/deployment.yaml
+                    cat k8s/deployment.yaml
+                    sed -i "s|LABEL|${IMAGE_TAG}|g" k8s/service.yaml
+                    cat k8s/service.yaml
                     """
+
+                    sh('echo "TOKEN $K8S_TOKEN"')
+                    sh('echo "CA $K8S_CA"')
+                    sh('echo "Server $K8S_SERVER"')
 
                     sh("kubectl apply -f k8s/deployment.yaml --token $K8S_TOKEN --certificate-authority $K8S_CA --server $K8S_SERVER")
                     sh("kubectl apply -f k8s/service.yaml --token $K8S_TOKEN --certificate-authority $K8S_CA --server $K8S_SERVER")
