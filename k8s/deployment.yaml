@@ -7,16 +7,16 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: gofiber-${LABEL}
+      app: gofiber-LABEL
   template:
     metadata:
       labels:
-        app: gofiber-${LABEL}
+        app: gofiber-LABEL
     spec:
       imagePullSecrets:
       - name: nexus-pull-secret
       containers:
         - name: gofiber
-          image: '${IMAGE}'
+          image: 'IMAGETAG'
           ports:
             - containerPort: 3000
