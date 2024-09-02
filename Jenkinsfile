@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Global environment variable for image tag
-        IMAGE_TAG = 'v"${BUILD_NUMBER}"-dev' // Change this to your desired tag, BUID_NUMBER is number run pipeline
+        IMAGE_TAG = 'v' // Change this to your desired tag, BUID_NUMBER is number run pipeline
         NEXUS_URL = 'http://192.168.1.215:9876'
         IMAGE_NAME = '192.168.1.215:9876/go/gofiber'
     }
@@ -19,7 +19,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'echo "Building Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"'
+                    sh 'echo "Building Docker image: ${IMAGE_NAME}:${IMAGE_TAG}-${BUILD_NUMBER}"'
                     // Build Docker image with tag
                     docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
                 }
