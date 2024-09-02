@@ -27,6 +27,7 @@ func main() {
 			"IP":            ip,
 			"Message":       "Test CICD From Go",
 			"Version Image": "v0.1",
+			"Jenkins":       "Test auto build tag",
 		})
 
 	})
@@ -35,8 +36,8 @@ func main() {
 
 		fmt.Println("Send Request From Path /p1 Success")
 		return c.JSON(fiber.Map{
-			"Message":       "Path /p1",
-			"Version Image": "v0.1",
+			"Message": "Path /p1",
+			"Hello":   "Form Path /p1",
 		})
 
 	})
