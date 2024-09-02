@@ -41,41 +41,25 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-            // environment {
-            //     K8S_TOKEN = credentials('jenkins-robot')
-            //     K8S_CA = credentials('ca-k8s')
-            //     K8S_SERVER = credentials('server-k8s')
-            // }
-            withKubeConfig([credentialsId: 'jenkins-robot', 
-                            serverUrl: 'server-k8s', 
-                            caCertificate: 'ca-k8s']) {
-                sh 'kubectl apply -f k8s/deployment.yaml'
-                sh 'kubectl apply -f k8s/service.yaml'
-                sh 'kubectl apply -f k8s/ingress.yaml'
-            }   
-        //     steps {
-        //         script {
-        //             sh 'echo "Deploying to Kubernetes cluster"'
-        //             // Edit IMAGE & Label file deployment, service
-                    
-        //             sh """
-        //             sed -i "s|image: ''|image: ${IMAGE_NAME}:${IMAGE_TAG}|g" k8s/deployment.yaml
-        //             sed -i "s|LABEL|${IMAGE_TAG}|g" k8s/deployment.yaml
-        //             cat k8s/deployment.yaml
-        //             sed -i "s|LABEL|${IMAGE_TAG}|g" k8s/service.yaml
-        //             cat k8s/service.yaml
-        //             """
+            steps {
+                script {
 
-        //             sh('echo "TOKEN $K8S_TOKEN"')
-        //             sh('echo "CA $K8S_CA"')
-        //             sh('echo "Server $K8S_SERVER"')
+                    sh """
+                    sed -i "s|image: ''|image: ${IMAGE_NAME}:${IMAGE_TAG}|g" k8s/deployment.yaml
+                    sed -i "s|LABEL|${IMAGE_TAG}|g" k8s/deployment.yaml
+                    cat k8s/deployment.yaml
+                    sed -i "s|LABEL|${IMAGE_TAG}|g" k8s/service.yaml
+                    cat k8s/service.yaml
+                    """
 
-        //             sh("kubectl apply -f k8s/deployment.yaml --token $K8S_TOKEN --certificate-authority $K8S_CA --server $K8S_SERVER")
-        //             sh("kubectl apply -f k8s/service.yaml --token $K8S_TOKEN --certificate-authority $K8S_CA --server $K8S_SERVER")
-        //             sh("kubectl apply -f k8s/ingress.yaml --token $K8S_TOKEN --certificate-authority $K8S_CA --server $K8S_SERVER")
-
-        //         }
-        //     }
+                    withKubeConfig([credentialsId: 'kubeconfig') {
+                        sh 'kubectl apply -f k8s/deployment.yaml'
+                        sh 'kubectl apply -f k8s/service.yaml'
+                        sh 'kubectl apply -f k8s/ingress.yaml'
+                    }
+                }
+            }
+            
         }
     }
 
