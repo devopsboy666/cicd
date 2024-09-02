@@ -51,6 +51,9 @@ pipeline {
             steps {
                 script {
                     sh 'echo "Deploying to Kubernetes cluster"'
+                    sh 'echo "K8S_TOKEN = ${K8S_TOKEN}"'
+                    sh 'echo "K8S_CA = ${K8S_CA}"'
+                    sh 'echo "K8S_SERVER = ${K8S_SERVER}"'
 
                     // Edit IMAGE & Label file deployment, service
                     sh """
