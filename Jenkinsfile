@@ -46,7 +46,7 @@ pipeline {
                 // Load kubernetes rootCA (create form credentials -> kind secret file)
                 K8S_CA = credentials('ca-k8s')
                 // Kubernetes Server
-                K8S_SERVER = credentials('server-k8s') 
+                K8S_SERVER = "https://192.168.100.201:6443" 
             }
             steps {
                 script {
