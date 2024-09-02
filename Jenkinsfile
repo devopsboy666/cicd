@@ -6,6 +6,12 @@ pipeline {
         IMAGE_TAG = "v${BUILD_NUMBER}" // Change this to your desired tag, BUID_NUMBER is number run pipeline
         NEXUS_URL = 'http://192.168.1.215:9876'
         IMAGE_NAME = '192.168.1.215:9876/go/gofiber'
+        // Load Kubernetes token from Jenkins credentials (create form credentials -> kind secret txt)
+        K8S_TOKEN = credentials('k8s-token')
+        // Load kubernetes rootCA (create form credentials -> kind secret file)
+        K8S_CA = credentials('ca-k8s')
+        // Kubernetes Server
+        K8S_SERVER = "https://192.168.100.201:6443"
     }
 
     stages {
@@ -40,14 +46,6 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-            environment {
-                // Load Kubernetes token from Jenkins credentials (create form credentials -> kind secret txt)
-                K8S_TOKEN = credentials('k8s-token')
-                // Load kubernetes rootCA (create form credentials -> kind secret file)
-                K8S_CA = credentials('ca-k8s')
-                // Kubernetes Server
-                K8S_SERVER = "https://192.168.100.201:6443" 
-            }
             steps {
                 script {
                     sh 'echo "Deploying to Kubernetes cluster"'
