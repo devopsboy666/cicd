@@ -42,7 +42,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             environment {
-                K8S_TOKEN = credentials('k8s-token')
+                K8S_TOKEN = credentials('jenkins-robot')
                 K8S_CA = credentials('ca-k8s')
                 K8S_SERVER = credentials('server-k8s')
             }
