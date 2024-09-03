@@ -2,11 +2,9 @@ pipeline {
     agent any
 
     environment {
-        // Global environment variable for image tag
         IMAGE_TAG = "v${BUILD_NUMBER}" // Change this to your desired tag, BUID_NUMBER is number run pipeline
         NEXUS_URL = 'http://192.168.1.215:9876'
         IMAGE_NAME = '192.168.1.215:9876/go/gofiber'
-        // Load Kubernetes token from Jenkins credentials (create form credentials -> kind secret txt)
     }
 
     stages {
@@ -47,9 +45,7 @@ pipeline {
                     sh """
                     sed -i "s|image: ''|image: ${IMAGE_NAME}:${IMAGE_TAG}|g" k8s/deployment.yaml
                     sed -i "s|LABEL|${IMAGE_TAG}|g" k8s/deployment.yaml
-                    cat k8s/deployment.yaml
                     sed -i "s|LABEL|${IMAGE_TAG}|g" k8s/service.yaml
-                    cat k8s/service.yaml
                     """
 
                     withKubeConfig([credentialsId: 'context']) {
