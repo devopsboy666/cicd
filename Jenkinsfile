@@ -15,6 +15,35 @@ pipeline {
             }
         }
 
+        stage('OWASP Dependency Check') {
+            steps {
+                script {
+                    dependencyCheck additionalArguments: '--project "cicd" --out .', 
+                                    odcInstallation: 'OWASP-Dependency-Check-Vulnerabilities', 
+                                    scanpath: './'
+                }
+            }
+            post {
+                always {
+                    script {
+                        // Move the report to /tmp directory
+                        sh "mv dependency-check-report.html /tmp/dependency-check-report-${BUILD_NUMBER}.html"
+                    }
+
+                    // Archive the report as an artifact and publish HTML report
+                    archiveArtifacts artifacts: "/tmp/dependency-check-report-${BUILD_NUMBER}.html", allowEmptyArchive: true
+                    publishHTML target: [
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: '/tmp',
+                        reportFiles: "dependency-check-report-${BUILD_NUMBER}.html",
+                        reportName: 'OWASP Dependency Check Report'
+                    ]
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
