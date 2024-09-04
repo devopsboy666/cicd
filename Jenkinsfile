@@ -32,6 +32,8 @@ pipeline {
                         sh 'pwd'
                         sh 'ls -ltr'
                         sh "mv dependency-check-report.html /tmp/dependency-check-report-${BUILD_NUMBER}.html"
+                        sh "mv dependency-check-report.html /tmp/dependency-check-report-${BUILD_NUMBER}.html || true"
+                        sh 'ls -ltr /tmp'
                     }
 
                     // Archive the report as an artifact and publish HTML report
