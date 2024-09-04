@@ -1,4 +1,4 @@
-# สร้าง App ที่เป็น Backend ขึ้นมาง่าย ๆ ด้วยภาษา Golang โดยจะมีทั้งหมดสาม Path คือ
+# สร้าง App ด้วยภาษา Golang โดยจะมีทั้งหมดสาม Path คือ
 1. / เป็น path แรกสุด
 2. /p1
 3. /status ที่เพื่อใช้ในการทำ Readiness Probes และ Liveness Probes
@@ -79,12 +79,20 @@ kubectl -n app create secret docker-registry nexus-pull-secret --docker-server=<
 
 # เพิ่ม Credentials nexus และ kubeconfig 
 1. ลง Plugins เพิ่มเติมดังนี้
+```
 Dashboard -> Manage Jenkins -> Plugins -> Avaliable Plugins -> Search "Pulgin Docker pipeline"
 Dashboard -> Manage Jenkins -> Plugins -> Avaliable Plugins -> Search "Pulgin kubernetes CLI"
 Dashboard -> Manage Jenkins -> Plugins -> Avaliable Plugins -> Search "Pulgin Stage View"
-1. เพิ่ม credentials nexus สำหรับ push และ pull image
+```
+2. เพิ่ม credentials nexus สำหรับ push และ pull image
+```
 Dashboard -> Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted) -> Add Credentails -> กรอกข้อมูลลงไป โดยเลือก Kind = Username with password (ในตัวอย่างตั้งชื่อว่า nexus-credentials)
-2. เพิ่ม credentials ของ kubeconfig
+```
+3. เพิ่ม credentials ของ kubeconfig
+```
 Dashboard -> Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted) -> Add Credentails -> กรอกข้อมูลลงไป โดยเลือก Kind = Secret file (ในตัวอย่างตั้งชื่อว่า context)
-3. สร้าง pipeline ขึ้นมา
+```
+4. สร้าง pipeline ขึ้นมา
+```
 Dashboard -> New Item -> เลือก Pipeline -> Pipeline Definition เลือกเป็น "Pipeline script from SCM"
+```
