@@ -23,12 +23,14 @@ pipeline {
                                     scanpath: './'
                 }
                 sh 'pwd'
+                sh 'ls -ltr'
             }
             post {
                 always {
                     script {
                         // Move the report to /tmp directory
                         sh 'pwd'
+                        sh 'ls -ltr'
                         sh "mv dependency-check-report.html /tmp/dependency-check-report-${BUILD_NUMBER}.html"
                     }
 
