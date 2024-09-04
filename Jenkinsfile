@@ -22,11 +22,13 @@ pipeline {
                                     odcInstallation: 'OWASP-Dependency-Check-Vulnerabilities', 
                                     scanpath: './'
                 }
+                sh 'pwd'
             }
             post {
                 always {
                     script {
                         // Move the report to /tmp directory
+                        sh 'pwd'
                         sh "mv dependency-check-report.html /tmp/dependency-check-report-${BUILD_NUMBER}.html"
                     }
 
