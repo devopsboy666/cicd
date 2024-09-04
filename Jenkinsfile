@@ -31,18 +31,18 @@ pipeline {
                         // Move the report to /tmp directory
                         // sh 'pwd'
                         sh 'ls -ltr'
-                        sh "mv dependency-check-report.html dependency-check-report-${BUILD_NUMBER}.html"
+                        sh "mv dependency-check-report.html /tmp/dependency-check-report-${BUILD_NUMBER}.html"
                         // sh "mv dependency-check-report.html /tmp/dependency-check-report-${BUILD_NUMBER}.html || true"
-                        // sh 'ls -ltr /tmp'
+                        sh 'ls -ltr /tmp'
                     }
 
                     // Archive the report as an artifact and publish HTML report
-                    archiveArtifacts artifacts: "dependency-check-report-${BUILD_NUMBER}.html", allowEmptyArchive: true
+                    archiveArtifacts artifacts: "/tmp/dependency-check-report-${BUILD_NUMBER}.html", allowEmptyArchive: true
                     publishHTML target: [
                         allowMissing: true,
                         alwaysLinkToLastBuild: false,
                         keepAll: true,
-                        reportDir: '.',
+                        reportDir: '/tmp/',
                         reportFiles: "dependency-check-report-${BUILD_NUMBER}.html",
                         reportName: 'OWASP Dependency Check Report'
                     ]
@@ -94,10 +94,10 @@ pipeline {
         }
     }
 
-    // post {
-    //     always {
-    //         // Clean up
-    //         cleanWs()
-    //     }
-    // }
+    post {
+        always {
+            // Clean up
+            cleanWs()
+        }
+    }
 }
