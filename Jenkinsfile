@@ -87,10 +87,11 @@ pipeline {
     }
 
     // Clear Workspace after run pipeline success
-    // post {
-    //     always {
-    //         // Clean up
-    //         cleanWs()
-    //     }
-    // }
+    post {
+        always {
+            echo "Pipeline Success"
+            // Clean up
+            // cleanWs()
+        }
+    }
 }
