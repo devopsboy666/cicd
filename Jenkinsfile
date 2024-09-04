@@ -73,8 +73,6 @@ pipeline {
 
                     sh """
                     sed -i "s|image: ''|image: ${IMAGE_NAME}:${IMAGE_TAG}|g" k8s/deployment.yaml
-                    sed -i "s|LABEL|${IMAGE_TAG}|g" k8s/deployment.yaml
-                    sed -i "s|LABEL|${IMAGE_TAG}|g" k8s/service.yaml
                     """
 
                     withKubeConfig([credentialsId: 'context']) {

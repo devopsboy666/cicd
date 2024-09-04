@@ -6,7 +6,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: gofiber-LABEL
+    app: gofiber
   ports:
     - protocol: TCP
       port: 3000

@@ -7,11 +7,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: gofiber-LABEL
+      app: gofiber
   template:
     metadata:
       labels:
-        app: gofiber-LABEL
+        app: gofiber
     spec:
       imagePullSecrets:
       - name: nexus-pull-secret
