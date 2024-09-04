@@ -18,7 +18,7 @@ pipeline {
         stage('OWASP Dependency Check') {
             steps {
                 script {
-                    dependencyCheck additionalArguments: '--project "cicd" --out .', 
+                    dependencyCheck additionalArguments: '--project "cicd" --out . --format HTML', 
                                     odcInstallation: 'OWASP-Dependency-Check-Vulnerabilities', 
                                     scanpath: './'
                 }
