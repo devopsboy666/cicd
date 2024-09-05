@@ -31,15 +31,16 @@ pipeline {
         stage('OWASP Dependency Check') {
             steps {
                 script {
-                    dependencyCheck additionalArguments: '--project "cicd" --out . --format HTML --prettyPrint', 
+                    dependencyCheck additionalArguments: '--project "cicd" --out . --format ALL --prettyPrint', 
                                     odcInstallation: 'OWASP-Dependency-Check-Vulnerabilities', 
                                     scanpath: './'
                 }
             }
             post {
                 always {
-                    
+
                     script {
+                        sh 'ls -ltr'
                         sh "mv dependency-check-report.html dependency-check-report-${BUILD_NUMBER}.html"
                     }
 
