@@ -29,7 +29,7 @@ pipeline {
         stage('OWASP Dependency Check') {
             steps {
                 script {
-                    dependencyCheck additionalArguments: '--project "cicd" --out ./ --format HTML --prettyPrint', 
+                    dependencyCheck additionalArguments: '--project "cicd" --out ./ --format HTML', 
                                     odcInstallation: 'OWASP-Dependency-Check-Vulnerabilities', 
                                     scanpath: './'
                 }
