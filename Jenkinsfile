@@ -34,6 +34,8 @@ pipeline {
                     dependencyCheck additionalArguments: '--project "cicd" --out . --format ALL --prettyPrint', 
                                     odcInstallation: 'OWASP-Dependency-Check-Vulnerabilities', 
                                     scanpath: './'
+                    sh "mv dependency-check-report.xml dependency-check-report-${BUILD_NUMBER}.xml"
+                    dependencyCheckPublisher pattern: 'dependency-check-report-${BUILD_NUMBER}.xml'
                 }
             }
             post {
@@ -42,7 +44,6 @@ pipeline {
                     script {
                         sh 'ls -ltr'
                         sh "mv dependency-check-report.html dependency-check-report-${BUILD_NUMBER}.html"
-                        sh "mv dependency-check-report.xml dependency-check-report-${BUILD_NUMBER}.xml"
                     }
 
                     // Archive the report as an artifact and publish HTML report
@@ -55,7 +56,6 @@ pipeline {
                         reportFiles: "dependency-check-report-${BUILD_NUMBER}.html",
                         reportName: 'OWASP Dependency Check Report'
                     ]
-                    dependencyCheckPublisher pattern: 'dependency-check-report-${BUILD_NUMBER}.xml'
                 }
             }
         }
