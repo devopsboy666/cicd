@@ -37,12 +37,12 @@ pipeline {
                 }
             }
             post {
-                steps {
+                always {
+                    
                     script {
                         sh "mv dependency-check-report.html dependency-check-report-${BUILD_NUMBER}.html"
                     }
-                }
-                always {
+
                     // Archive the report as an artifact and publish HTML report
                     archiveArtifacts artifacts: "dependency-check-report-${BUILD_NUMBER}.html", allowEmptyArchive: true
                     publishHTML target: [
