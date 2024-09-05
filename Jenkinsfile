@@ -6,7 +6,7 @@ pipeline {
     }
 
     stages {
-        stage('Set Environment variable') {
+        stage('Set Environment Variable') {
             steps {
                 withCredentials([string(credentialsId: 'nexus-url', variable: 'VAR_NEXUS_URL')]) { 
                     script {
@@ -16,6 +16,11 @@ pipeline {
                 withCredentials([string(credentialsId: 'gofiber-image-name', variable: 'VAR_IMAGE')]) { 
                     script {
                         env.IMAGE_NAME =  "${VAR_IMAGE}/go/gofiber"
+                    }
+                }
+                withCredentials([string(credentialsId: 'my-email', variable: 'VAR_EMAIL')]) { 
+                    script {
+                        env.EMAIL =  "${VAR_EMAIL}"
                     }
                 }
             }
@@ -101,6 +106,19 @@ pipeline {
                 }
             }
             
+        }
+
+        stage('Send Email') {
+            steps {
+                script {
+                    emailext(
+                        subject: "Run CICD Pipeline OWASP Success",
+                        body: "Build golong image -> push image to nexus -> Deploy to kubernetes Cluster",
+                        attachmentsPattern: "dependency-check-report-${BUILD_NUMBER}.html",
+                        to: "${EMAIL}"
+                    )
+                }
+            }
         }
     }
 
