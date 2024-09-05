@@ -3,11 +3,22 @@ pipeline {
 
     environment {
         IMAGE_TAG = "v${BUILD_NUMBER}" // Change this to your desired tag, BUID_NUMBER is number run pipeline
-        NEXUS_URL = 'http://192.168.1.215:9876'
-        IMAGE_NAME = '192.168.1.215:9876/go/gofiber'
+        IMAGE_NAME = ''
+        NEXUS_URL = ''
     }
 
     stages {
+        stage('Set Environment variable'){
+            withCredentials([string(credentialsId: 'nexus-url', variable: 'NEXUS_URL')]) {
+                env.NEXUS_URL = NEXUS_URL
+                env.IMAGE_NAME =  NEXUS_URL + "/go/gofiber"
+                script {
+                    sh 'NEXUS_URL = "${NEXUS_URL}"'
+                    sh 'IMAGE_NAME = "${IMAGE_NAME}"'
+                }
+            }
+        }
+
         stage('Clone Repository') {
             steps {
                 // Clone the Git repository
@@ -18,18 +29,13 @@ pipeline {
         stage('OWASP Dependency Check') {
             steps {
                 script {
-                    dependencyCheck additionalArguments: '--project "cicd" --out . --format HTML', 
+                    dependencyCheck additionalArguments: '--project "cicd" --out ./ --format HTML --prettyPrint', 
                                     odcInstallation: 'OWASP-Dependency-Check-Vulnerabilities', 
                                     scanpath: './'
                 }
             }
             post {
                 always {
-                    script {
-                        sh 'ls -ltr'
-                        sh "mv dependency-check-report.html dependency-check-report-${BUILD_NUMBER}.html"
-                    }
-
                     // Archive the report as an artifact and publish HTML report
                     archiveArtifacts artifacts: "dependency-check-report-${BUILD_NUMBER}.html", allowEmptyArchive: true
                     publishHTML target: [
@@ -63,6 +69,7 @@ pipeline {
                         // Push Docker image to Nexus
                         docker.image("${IMAGE_NAME}:${IMAGE_TAG}").push("${IMAGE_TAG}")
                     }
+                    
                 }
             }
         }
