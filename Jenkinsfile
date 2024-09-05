@@ -8,11 +8,13 @@ pipeline {
     stages {
         stage('Set Environment variable') {
             steps {
-                withCredentials([string(credentialsId: 'nexus-url', variable: 'VAR_NEXUS_URL')],
-                                [string(credentialsId: 'gofiber-image-name', variable: 'VAR_IMAGE')]
-                ) { 
+                withCredentials([string(credentialsId: 'nexus-url', variable: 'VAR_NEXUS_URL')]) { 
                     script {
                         env.NEXUS_URL = "${VAR_NEXUS_URL}"
+                    }
+                }
+                withCredentials([string(credentialsId: 'gofiber-image-name', variable: 'VAR_IMAGE')]) { 
+                    script {
                         env.IMAGE_NAME =  "${VAR_IMAGE}/go/gofiber"
                     }
                 }
