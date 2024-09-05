@@ -31,17 +31,19 @@ pipeline {
         stage('OWASP Dependency Check') {
             steps {
                 script {
+                    // Create File 
                     dependencyCheck additionalArguments: '--project "cicd" --out . --format ALL --prettyPrint', 
                                     odcInstallation: 'OWASP-Dependency-Check-Vulnerabilities', 
                                     scanpath: './'
-                    // dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+                    
+                    // Show on Jenkins Dashboard
+                    dependencyCheckPublisher pattern: 'dependency-check-report.xml'
                 }
             }
             post {
                 always {
 
                     script {
-                        sh 'ls -ltr'
                         sh "mv dependency-check-report.html dependency-check-report-${BUILD_NUMBER}.html"
                     }
 
