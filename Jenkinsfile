@@ -12,10 +12,10 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'nexus-url', variable: 'VAR_NEXUS_URL')]) { 
                     script {
-                        env.NEXUS_URL = "${VAR_NEXUS_URL}"
-                        env.IMAGE_NAME =  "${VAR_NEXUS_URL}/go/gofiber"
-                        sh 'NEXUS_URL = "${env.NEXUS_URL}"'
-                        sh 'IMAGE_NAME = "${env.IMAGE_NAME}"'
+                        export NEXUS_URL = "${VAR_NEXUS_URL}"
+                        export IMAGE_NAME =  "${VAR_NEXUS_URL}/go/gofiber"
+                        sh 'NEXUS_URL = "${NEXUS_URL}"'
+                        sh 'IMAGE_NAME = "${IMAGE_NAME}"'
                     }
                 }
             }
