@@ -31,12 +31,15 @@ pipeline {
         stage('OWASP Dependency Check') {
             steps {
                 script {
-                    dependencyCheck additionalArguments: '--project "cicd" --out ./ --format HTML', 
+                    dependencyCheck additionalArguments: '--project "cicd" --out . --format HTML --prettyPrint', 
                                     odcInstallation: 'OWASP-Dependency-Check-Vulnerabilities', 
                                     scanpath: './'
                 }
             }
             post {
+                script {
+                    sh "mv dependency-check-report.html dependency-check-report-${BUILD_NUMBER}.html"
+                }
                 always {
                     // Archive the report as an artifact and publish HTML report
                     archiveArtifacts artifacts: "dependency-check-report-${BUILD_NUMBER}.html", allowEmptyArchive: true
