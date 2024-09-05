@@ -80,9 +80,12 @@ kubectl -n app create secret docker-registry nexus-pull-secret --docker-server=<
 # เพิ่ม Credentials nexus และ kubeconfig 
 1. ลง Plugins เพิ่มเติมดังนี้
 ```
-Dashboard -> Manage Jenkins -> Plugins -> Avaliable Plugins -> Search "Pulgin Docker pipeline"
-Dashboard -> Manage Jenkins -> Plugins -> Avaliable Plugins -> Search "Pulgin kubernetes CLI"
-Dashboard -> Manage Jenkins -> Plugins -> Avaliable Plugins -> Search "Pulgin Stage View"
+Dashboard -> Manage Jenkins -> Plugins -> Avaliable Plugins -> Search "Docker pipeline"
+Dashboard -> Manage Jenkins -> Plugins -> Avaliable Plugins -> Search "kubernetes CLI"
+Dashboard -> Manage Jenkins -> Plugins -> Avaliable Plugins -> Search "Stage View"
+Dashboard -> Manage Jenkins -> Plugins -> Avaliable Plugins -> Search "OWASP Dependency-Check"
+Dashboard -> Manage Jenkins -> Plugins -> Avaliable Plugins -> Search "HTML Publisher"
+Dashboard -> Manage Jenkins -> Plugins -> Avaliable Plugins -> Search "Email Extension Template"
 ```
 2. เพิ่ม credentials nexus สำหรับ push และ pull image
 ```
@@ -92,7 +95,28 @@ Dashboard -> Manage Jenkins -> Credentials -> System -> Global credentials (unre
 ```
 Dashboard -> Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted) -> Add Credentails -> กรอกข้อมูลลงไป โดยเลือก Kind = Secret file (ในตัวอย่างตั้งชื่อว่า context)
 ```
-4. สร้าง pipeline ขึ้นมา
+4. เพิ่ม credentials สำหรับ ชื่อ Image (ทำขั้นตอนนี้เนื่องจาก ชื่อ image จะตั้งเป็นชื่อ ที่ขึ้นต้นด้วย IP เครื่อง Nexus)
 ```
-Dashboard -> New Item -> เลือก Pipeline -> Pipeline Definition เลือกเป็น "Pipeline script from SCM"
+Dashboard -> Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted) -> Add Credentails -> กรอกข้อมูลลงไป โดยเลือก Kind = Secret text (ในตัวอย่างตั้งชื่อว่า gofiber-image-name)
+```
+5. เพิ่ม credentials สำหรับ ที่อยู่ของ Nexus
+```
+Dashboard -> Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted) -> Add Credentails -> กรอกข้อมูลลงไป โดยเลือก Kind = Secret text (ในตัวอย่างตั้งชื่อว่า nexus-url)
+```
+6. เพิ่ม credentials สำหรับ ที่อยู่ของ Email ที่จะส่งไป
+```
+Dashboard -> Manage Jenkins -> Credentials -> System -> Global credentials (unrestricted) -> Add Credentails -> กรอกข้อมูลลงไป โดยเลือก Kind = Secret text (ในตัวอย่างตั้งชื่อว่า my-email)
+```
+7. Configuring Content Security Policy เพื่อให้ Plugin OWASP และ HTML สามารถ Show ที่หน้า Jenkins Dashboard ได้
+```
+Dashboard -> Manage Jenkins -> Nodes -> Click Gear -> Script Console -> Run ตามด้านล่าง
+System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' 'unsafe-inline' data:;")
+```
+8. Config Extended E-mail Notification
+```
+Dashboard -> System -> เลื่อนหา "Extended E-mail Notification" ->  กรอกข้อมูลของ SMTP Server ที่จะทำการส่ง
+```
+9. สร้าง pipeline ขึ้นมา
+```
+Dashboard -> New Item -> เลือก Pipeline -> Pipeline Definition เลือกเป็น "Pipeline script from SCM" -> เลือก Git จากนั้นเอา repo url ไปใส่
 ```
