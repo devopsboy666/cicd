@@ -34,8 +34,7 @@ pipeline {
                     dependencyCheck additionalArguments: '--project "cicd" --out . --format ALL --prettyPrint', 
                                     odcInstallation: 'OWASP-Dependency-Check-Vulnerabilities', 
                                     scanpath: './'
-                    sh "mv dependency-check-report.xml dependency-check-report-${BUILD_NUMBER}.xml"
-                    dependencyCheckPublisher pattern: 'dependency-check-report-${BUILD_NUMBER}.xml'
+                    dependencyCheckPublisher pattern: 'dependency-check-report.xml'
                 }
             }
             post {
