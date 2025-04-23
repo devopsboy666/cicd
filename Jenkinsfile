@@ -1,17 +1,6 @@
 @Library('my-sharelib') _
 
 
-// Parameter
-parameters {
-    string(name: 'GIT_URL', defaultValue: 'https://github.com/devopsboy666/cicd.git', description: 'Git URL')
-    string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Git branch to build')
-    string(name: 'IMAGE_NAME', defaultValue: 'goapp', description: 'Image Name for Application')
-    string(name: 'IMAGE_TAG', defaultValue: '1.0.0', description: 'Image Name for Application')
-    string(name: 'RELEASE', defaultValue: 'goapp', description: 'Helm Release Name')
-}
-
-
-
 // ประกาศตัวแปร
 def gitUrl = params.GIT_URL
 def repoName = gitUrl.tokenize('/').last().replace('.git', '')
@@ -27,7 +16,18 @@ def deployApp = new com.demo.DeployApp([steps: this, releaseName: params.RELEASE
 
 
 pipeline {
+
+    // Parameter
+    parameters {
+        string(name: 'GIT_URL', defaultValue: 'https://github.com/devopsboy666/cicd.git', description: 'Git URL')
+        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Git branch to build')
+        string(name: 'IMAGE_NAME', defaultValue: 'goapp', description: 'Image Name for Application')
+        string(name: 'IMAGE_TAG', defaultValue: '1.0.0', description: 'Image Name for Application')
+        string(name: 'RELEASE', defaultValue: 'goapp', description: 'Helm Release Name')
+    }
+
     agent { label 'k8s' }
+
     stages {
 
         stage('Check Connection Libs'){
