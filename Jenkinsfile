@@ -1,20 +1,6 @@
 @Library('my-sharelib') _
 
 
-// ประกาศตัวแปร
-def gitUrl = params.GIT_URL
-def repoName = gitUrl.tokenize('/').last().replace('.git', '')
-def pathHelm = repoName + "/helm"
-
-
-
-// ประการ Class
-def gitClone = new com.demo.CloneRepo([steps: this, branch: 'main', repoUrl: repoUrl])
-def buildImage = new com.demo.BuildImage([steps: this, imageName: params.IMAGE_NAME, imageTag: params.IMAGE_TAG, dockerfilePath: repoName])
-def deployApp = new com.demo.DeployApp([steps: this, releaseName: params.RELEASE ,imageName: params.IMAGE_NAME, imageTag: params.IMAGE_TAG, pathHelm: pathHelm])
-
-
-
 pipeline {
 
     // Parameter
@@ -25,6 +11,20 @@ pipeline {
         string(name: 'IMAGE_TAG', defaultValue: '1.0.0', description: 'Image Name for Application')
         string(name: 'RELEASE', defaultValue: 'goapp', description: 'Helm Release Name')
     }
+
+    // ประกาศตัวแปร
+    def gitUrl = params.GIT_URL
+    def repoName = gitUrl.tokenize('/').last().replace('.git', '')
+    def pathHelm = repoName + "/helm"
+
+
+
+    // ประการ Class
+    def gitClone = new com.demo.CloneRepo([steps: this, branch: 'main', repoUrl: gitUrl])
+    def buildImage = new com.demo.BuildImage([steps: this, imageName: params.IMAGE_NAME, imageTag: params.IMAGE_TAG, dockerfilePath: repoName])
+    def deployApp = new com.demo.DeployApp([steps: this, releaseName: params.RELEASE ,imageName: params.IMAGE_NAME, imageTag: params.IMAGE_TAG, pathHelm: pathHelm])
+
+
 
     agent { label 'k8s' }
 
