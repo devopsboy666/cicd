@@ -7,11 +7,11 @@ spec:
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      {{ include "go.labels" | nindent 6 }}
+      {{ include "go.labels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{ include "go.labels" | nindent 8 }}
+        {{ include "go.labels" . | nindent 8 }}
     spec:
       containers:
         - name: {{ .Release.name}}
