@@ -1,0 +1,16 @@
+app:
+  deploymentName: goapp-deploy
+  serviceName: goapp-service
+  ingressName: goapp-ingress
+  namespace: default
+
+replicas: 1
+
+image:
+  name: "localhost/goapp"
+  tag: "1.0.0"
+
+service:
+  targetPort: 3000
+  port: 80
+  protocol: TCP
