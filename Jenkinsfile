@@ -1,77 +1,80 @@
 @Library('my-sharelib') _
 
-
 pipeline {
 
-    // Parameter
     parameters {
         string(name: 'GIT_URL', defaultValue: 'https://github.com/devopsboy666/cicd.git', description: 'Git URL')
         string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Git branch to build')
         string(name: 'IMAGE_NAME', defaultValue: 'goapp', description: 'Image Name for Application')
-        string(name: 'IMAGE_TAG', defaultValue: '1.0.0', description: 'Image Name for Application')
+        string(name: 'IMAGE_TAG', defaultValue: '1.0.0', description: 'Image Tag for Application')
         string(name: 'RELEASE', defaultValue: 'goapp', description: 'Helm Release Name')
     }
-
-    // ประกาศตัวแปร
-    def gitUrl = params.GIT_URL
-    def repoName = gitUrl.tokenize('/').last().replace('.git', '')
-    def pathHelm = repoName + "/helm"
-
-
-
-    // ประการ Class
-    def gitClone = new com.demo.CloneRepo([steps: this, branch: 'main', repoUrl: gitUrl])
-    def buildImage = new com.demo.BuildImage([steps: this, imageName: params.IMAGE_NAME, imageTag: params.IMAGE_TAG, dockerfilePath: repoName])
-    def deployApp = new com.demo.DeployApp([steps: this, releaseName: params.RELEASE ,imageName: params.IMAGE_NAME, imageTag: params.IMAGE_TAG, pathHelm: pathHelm])
-
-
 
     agent { label 'k8s' }
 
     stages {
 
-        stage('Check Connection Libs'){
+        stage('Init') {
             steps {
                 script {
-                    try {
-                        gitClone.gitCloneRepo()
-                    } catch (err) {
-                        error(err.message)
-                    }
+                    def gitUrl = params.GIT_URL
+                    def repoName = gitUrl.tokenize('/').last().replace('.git', '')
+                    def pathHelm = repoName + "/helm"
+
+                    // สร้าง object แล้วเก็บใส่ env หรือ global var ก็ได้
+                    env.REPO_NAME = repoName
+                    env.PATH_HELM = pathHelm
+
+                    // หรือสร้าง object แล้ว pass ต่อใน stage ถัดไป
+                    // ex: currentBuild.description = repoName
                 }
             }
         }
 
-        stage('Build Image'){
+        stage('Clone Repo') {
             steps {
                 script {
-                    try {
-                        buildImage.dockerBuild()
-                    } catch(err) {
-                        error(err.message)
-                    }
+                    def gitClone = new com.demo.CloneRepo([steps: this, branch: params.BRANCH_NAME, repoUrl: params.GIT_URL])
+                    gitClone.gitCloneRepo()
                 }
             }
         }
 
-        stage('Deploy App'){
+        stage('Build Image') {
+            steps {
+                script {
+                    def buildImage = new com.demo.BuildImage([
+                        steps: this,
+                        imageName: params.IMAGE_NAME,
+                        imageTag: params.IMAGE_TAG,
+                        dockerfilePath: env.REPO_NAME
+                    ])
+                    buildImage.dockerBuild()
+                }
+            }
+        }
+
+        stage('Deploy') {
             steps {
                 script {
                     try {
                         input message: "Deploy App?", ok: "Approve"
                     } catch (err) {
-                        echo "User กดยกเลิกการ Deploy: ${err}"
-                        currentBuild.result = 'ABORTED'  // ไม่ถือว่า fail แค่ยกเลิกเฉยๆ
+                        echo "User ยกเลิกการ Deploy: ${err}"
+                        currentBuild.result = 'ABORTED'
                         return
                     }
 
-                    try {
-                        deployApp.helmDeploy()
-                    } catch (err) {
-                        error(err.message)
-                    }
+                    def deployApp = new com.demo.DeployApp([
+                        steps: this,
+                        releaseName: params.RELEASE,
+                        imageName: params.IMAGE_NAME,
+                        imageTag: params.IMAGE_TAG,
+                        pathHelm: env.PATH_HELM
+                    ])
+                    deployApp.helmDeploy()
                 }
             }
-        }   
+        }
     }
 }
